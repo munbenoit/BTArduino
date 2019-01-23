@@ -71,12 +71,6 @@ public class ScanActivity extends AppCompatActivity {
         });
 
         //setup the Bluetooth research
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(mReceiver, filter);
-
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(mReceiver, filter);
-
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetoothAdapter == null) {
@@ -95,67 +89,23 @@ public class ScanActivity extends AppCompatActivity {
                 if (bltPairedDevices != null && bltPairedDevices.size() > 0) {
                     for (BluetoothDevice bltD : bltPairedDevices) {
                         list.add(bltD);
-                        devices.add(bltD.getAddress() + " " + bltD.getName());;
+                        devices.add(bltD.getAddress() + " " + bltD.getName());
                     }
-                }
-                discoverDevices();
-            }
-        }
-    }
-
-
-    /*
-    * discoverDevices
-    * Manage the research of the devices
-     */
-    private void discoverDevices(){
-        Log.d("Discover","Discover the devices");
-        if(bluetoothAdapter.isDiscovering()){
-            bluetoothAdapter.cancelDiscovery();
-        }else{
-            bluetoothAdapter.startDiscovery();
-        }
-    }
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d("Discover","Start of the discovering");
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device.getBondState() == BluetoothDevice.BOND_BONDED){
-                    Log.d("Debug", "New device detected " + device.getName());
-                    devices.add(device.getAddress() + " " + device.getName());
-                    list.add(device);
-                }
-            }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                Log.d("Test", "Test");
-
-                if(devices.size()==0){
-                    Log.d("Debug", "Pas de devices");
-                    title.setText("No devices available");
-                }else{
+                    adapter = new ArrayAdapter<String>(ScanActivity.this, android.R.layout.simple_list_item_1, devices);
+                    list_devices.setAdapter(adapter);
                     title.setVisibility(View.INVISIBLE);
+
                 }
-
-                adapter = new ArrayAdapter<String>(ScanActivity.this, android.R.layout.simple_list_item_1, devices);
-                list_devices.setAdapter(adapter);
-
-
-                for(String s : devices){
-                    Log.d("Print devices", s);
+                else{
+                    title.setText("No devices available");
                 }
             }
         }
-    };
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
+        //unregisterReceiver(mReceiver);
     }
 }

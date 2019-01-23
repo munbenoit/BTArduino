@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int SCAN_ACTIVITY_REQUEST_CODE = 1;
     //identifier of the App
     private UUID MY_UUID = UUID.fromString("f9ef9c53-fede-45fc-ade7-8900215c7342");
-
+    private static final byte[] ON = "1".getBytes();
+    private static final byte[] OFF = "0".getBytes();
     //UI components
     private Button onBtn;
     private Button offBtn;
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothDevice selected_device;
-    private BluetoothSocket socket;
-    private ConnectionThread connection;
+    private BluetoothSocket socket = null;
+    private ConnectionThread connection = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,27 @@ public class MainActivity extends AppCompatActivity {
 
         //Setup of the layout environment
         onBtn = (Button) findViewById(R.id.activity_main_on_button);
+        onBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("ON", "onClick: ON");
+                if(bluetoothAdapter!=null && connection!=null){
+                    Log.d("ON", "onClick: ON");
+                    connection.write(ON);
+                }
+            }
+        });
         offBtn = (Button) findViewById(R.id.activity_main_off_button);
+        offBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("OFF", "onClick: OFF");
+                if(bluetoothAdapter!=null && connection!=null){
+                    Log.d("OFF", "onClick: OFF");
+                    connection.write(OFF);
+                }
+            }
+        });
         scanBtn = (Button) findViewById(R.id.activity_main_scan_button);
 
         //Add an event
@@ -79,8 +100,11 @@ public class MainActivity extends AppCompatActivity {
             //Start a new connection with a device
             connection = new ConnectionThread(selected_device);
             connection.run();
+
         }
     }
+
+
 
     /*
     * ConnectionThread
@@ -89,10 +113,10 @@ public class MainActivity extends AppCompatActivity {
     private class ConnectionThread extends Thread{
         private final BluetoothSocket Blt_socket;
         private final BluetoothDevice Blt_device;
+        private OutputStream outputStream;
 
         public ConnectionThread(BluetoothDevice device){
             BluetoothSocket tmp = null;
-            InputStream tmp_input = null;
             Blt_device = device;
             try{
                 Method m = Blt_device.getClass().getMethod("createInsecureRfcommSocket", new Class[] {int.class});
@@ -106,16 +130,18 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Blt_socket = tmp;
-            //Log.d("CONNECTION SUCCESS", "Connection established with " + Blt_device.getName() + " " + Blt_device.getAddress());
-            //Toast t = Toast.makeText(getApplicationContext(), "Connection to "+ device.getName() + "established", Toast.LENGTH_SHORT);
-            //t.show();
         }
 
         public void run(){
+            OutputStream tmp_output = null;
+            Log.d("Thread run", "Thread running");
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             bluetoothAdapter.cancelDiscovery();
             try{
                 Blt_socket.connect();
+                Toast notify = Toast.makeText(getApplicationContext(), "Connection to "+ Blt_device.getName() + "established", Toast.LENGTH_SHORT);
+                notify.show();
+                tmp_output = Blt_socket.getOutputStream();
             }catch (IOException connectException){
                 try {
                     Blt_socket.close();
@@ -125,9 +151,19 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("ERROR OPEN CONNECTION", connectException.getMessage(), connectException);
                 return;
             }
+            outputStream = tmp_output;
+        }
+
+        public void write(byte[] data){
+            try{
+                outputStream.write(data);
+            }catch (IOException e){
+
+            }
         }
 
         public void cancel(){
+            Log.d("Socket cancel", "Socket cancelled");
             try {
                 Blt_socket.close();
             }catch (IOException closeException){
