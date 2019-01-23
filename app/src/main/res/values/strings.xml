@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Bluetooth Arduino Controller</string>
+    <string name="scan_title">Searching devices, please wait</string>
 
 </resources>
