@@ -20,4 +20,16 @@
         android:layout_height="wrap_content">
 
     </ListView>
+
+    <TextView
+        android:id="@+id/activity_scan_not_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/not_found"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/activity_scan_device_list"
+        tools:ignore="UnknownId">
+
+    </TextView>
 </android.support.constraint.ConstraintLayout>

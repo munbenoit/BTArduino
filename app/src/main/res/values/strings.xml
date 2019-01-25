@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Bluetooth Arduino Controller</string>
     <string name="scan_title">Searching devices, please wait</string>
-
+    <string name="not_found">Your device is missing ? Please check your Bluetooth settings and make sure you are paired with it</string>
 </resources>

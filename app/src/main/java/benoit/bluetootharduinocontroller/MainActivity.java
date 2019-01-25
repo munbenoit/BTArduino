@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             bluetoothAdapter.cancelDiscovery();
             try{
                 Blt_socket.connect();
-                Toast notify = Toast.makeText(getApplicationContext(), "Connection to "+ Blt_device.getName() + "established", Toast.LENGTH_SHORT);
+                Toast notify = Toast.makeText(getApplicationContext(), "Connection to "+ Blt_device.getName() + " established", Toast.LENGTH_SHORT);
                 notify.show();
                 tmp_output = Blt_socket.getOutputStream();
             }catch (IOException connectException){

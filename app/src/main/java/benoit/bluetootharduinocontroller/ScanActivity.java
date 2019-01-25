@@ -41,6 +41,7 @@ public class ScanActivity extends AppCompatActivity {
     //UI components
     private ListView list_devices;
     private TextView title;
+    private TextView nf_message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class ScanActivity extends AppCompatActivity {
 
         //get the UI components
         title = (TextView)findViewById(R.id.activity_scan_title);
+        nf_message = (TextView)findViewById(R.id.activity_scan_not_found);
         list_devices = (ListView)findViewById(R.id.activity_scan_device_list);
         list_devices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,6 +96,7 @@ public class ScanActivity extends AppCompatActivity {
                     adapter = new ArrayAdapter<String>(ScanActivity.this, android.R.layout.simple_list_item_1, devices);
                     list_devices.setAdapter(adapter);
                     title.setVisibility(View.INVISIBLE);
+                    nf_message.setVisibility(View.VISIBLE);
 
                 }
                 else{
